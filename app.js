@@ -264,6 +264,18 @@ app.get('/user', auth, (req, res) => {
   })
 })
 
+// Get User Profile
+app.get('/profile', auth, async (req, res) => {
+  const {user_id} = req.user
+  User.findById((user_id),{password:0}, (error,result) => {
+    if(error) {
+      res.status(400).json(error)
+    } else {
+      res.json(result)
+    }
+  })
+})
+
 // Update User Profile
 app.put('/profile/:id', auth, async (req, res) => {
   const {name, password} = req.body
