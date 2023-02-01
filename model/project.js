@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const projectSchema = new Schema({
   name: String,
+  description: String,
   manager: { type : 'ObjectId', ref: 'user'},
   member: [{ type : 'ObjectId', ref: 'user'}],
   attachment: { type: String, default: null },

@@ -126,10 +126,11 @@ app.get('/project', auth, (req, res) => {
 
 // Create Project
 app.post('/project', auth, (req, res) => {
-  const {name, manager} = req.body
+  const {name, manager, description} = req.body
   proj = new Project({
     name: name,
-    manager: manager
+    manager: manager,
+    description: description
   }).save((err, result) => {
     if (!err) {
       res.json({status: 'success', message: 'Project Has Been Added!'})
@@ -138,6 +139,21 @@ app.post('/project', auth, (req, res) => {
         res.json({status: 'fail', message: 'Project Has Not Been Added!'})
     }
   })
+})
+
+// Update Project
+app.put('/project/:id', auth, (req, res) => {
+  const {name, description} = req.body
+  Project.findByIdAndUpdate((req.params.id), {'name': name, 'description': description}, function(err, result) {
+    if(err)
+    {
+        res.json({status: "fail", message: "Project failed to update!"})
+    }
+    else
+    {
+        res.json({status: "success", message: "Project has been updated"})
+    }
+  }) 
 })
 
 // Delete Project
@@ -183,8 +199,6 @@ app.post('/member', auth, async (req,res) => {
 // Delete Member From Project
 app.delete('/member/:member/:project', auth, (req, res) => {
   const {project, member} = req.params
-
-  console.log(req.params)
   Project.updateOne({_id: project}, { $pull: {member: member}  }, { safe: true }, (err,result) => {
     if(!err) {
       console.log(result)
@@ -227,7 +241,28 @@ app.post('/task', async (req,res) => {
   })
 })
 
+// Update Task
+app.put('/task/:id', auth, (req, res) => {
+  const {name, detail} = req.body
 
+  Task.findByIdAndUpdate((req.params.id), {'name': name, 'detail': detail}, function(err, result) {
+    if(err)
+    {
+        res.json({status: "fail", message: "Task failed to update!"})
+    }
+    else
+    {
+        res.json({status: "success", message: "Task has been updated"})
+    }
+  }) 
+})
+
+// List User
+app.get('/user', auth, (req, res) => {
+  User.find({},{name:1, email:1}).then((data)=>{
+    res.json(data)
+  })
+})
 
 
 // This should be the last route else any after it won't work
