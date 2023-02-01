@@ -264,6 +264,33 @@ app.get('/user', auth, (req, res) => {
   })
 })
 
+// Update User Profile
+app.put('/profile/:id', auth, async (req, res) => {
+  const {name, password} = req.body
+
+  if(!name) res.status(400).json('invalid')
+
+  let varUpdate;
+
+  if(!password) {
+    varUpdate = {'name': name}
+  } else {
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    varUpdate = {'name': name, 'password': encryptedPassword}
+  }
+
+  User.findByIdAndUpdate((req.params.id), varUpdate, function(err, result) {
+    if(err || result == null)
+    {
+        res.json({status: "fail", message: "User Profile failed to update!"})
+    }
+    else
+    {
+        res.json({status: "success", message: "User Profile has been updated"})
+    }
+  }) 
+})
+
 
 // This should be the last route else any after it won't work
 app.use("*", (req, res) => {
